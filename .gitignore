@@ -1,0 +1,10 @@
+### Nitro ###
+.nitro/
+.output/
+
+### Node.js ###
+node_modules/
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
