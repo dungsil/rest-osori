@@ -4,9 +4,14 @@
 
 ## 사용법
 
-### GET /licenses
+- [API 문서](https://rest-osori.vercel.app)
 
-라이선스 조회
+`Rest OSORI`는 각 사용자 별 설치형으로 사용하는 걸 권장하나
+데모 및 일시 사용 등을 이유로 공개 프록시를 제공합니다.
+
+1. `https://global-1.prod.osori.kyog.net/api`
+2. `https://global-2.prod.osori.kyog.net/api`
+3. `https://global-3.prod.osori.kyog.net/api`
 
 ## 라이선스
 
