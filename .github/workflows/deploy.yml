@@ -29,10 +29,10 @@ jobs:
           node-version: lts/*
 
       - name: Install step
-        run: "pnpm install"
+        run: "npm install"
 
       - name: Build step
-        run: "pnpm build:deno"
+        run: "npm run build:deno"
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
@@ -40,5 +40,5 @@ jobs:
           project: "rest-osori"
           entrypoint: ".output/server/index.ts"
           root: ""
-          include: .output
+          
           
