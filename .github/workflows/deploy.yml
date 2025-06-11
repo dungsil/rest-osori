@@ -1,9 +1,12 @@
 name: Deploy
 on:
   push:
-    branches: main
+    branches: [ main ]
+    paths-ignore:
+      - "**/*.md"
+      - "**/.git*"
   pull_request:
-    branches: main
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -40,5 +43,3 @@ jobs:
           project: "rest-osori"
           entrypoint: ".output/server/index.ts"
           root: ""
-          
-          
