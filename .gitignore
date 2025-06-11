@@ -1,6 +1,9 @@
 ### Nitro ###
 .nitro/
+.vercel/
+.netlify/
 .output/
+dist/
 
 ### Node.js ###
 node_modules/

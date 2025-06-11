@@ -8,7 +8,10 @@
     "postinstall": "nitro prepare",
     "dev": "nitro dev",
     "start:preview": "node .output/server/index.mjs",
-    "build": "nitro build"
+    "build": "nitro build",
+    "build:vercel": "nitro build --preset=vercel",
+    "build:netlify": "nitro build --preset=netlify_edge",
+    "build:deno": "nitro build --preset=deno_deploy"
   },
   "devDependencies": {
     "@types/node": "22.15.31",
