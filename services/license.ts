@@ -1,8 +1,14 @@
 import { version } from '../package.json'
 import { cachedFunction } from 'nitropack/runtime'
 import { createCacheOptions } from '~/utils/cache'
-import { OsoriErrorResponse, OsoriLicenseInfo, OsoriListResponse } from '~/schema/osori'
-import { SearchLicenseQuery } from '~/schema/license'
+import {
+  OsoriDetailResponse,
+  OsoriErrorResponse,
+  OsoriLicenseDetailInfo,
+  OsoriLicenseInfo,
+  OsoriListResponse
+} from '~/schema/osori'
+import { LicenseDetailQuery, SearchLicenseQuery } from '~/schema/license'
 
 const fetchLicense = $fetch.create(
   {
@@ -30,9 +36,10 @@ export const searchLicense = cachedFunction<OsoriListResponse<OsoriLicenseInfo> 
       sort: 'id',
       direction: 'ASC',
 
-      id: query.q.id ?? '',
-      name: query.q.name ?? '',
-      spdxIdentifier: query.q.spdx ?? '',
+      id: query?.q?.id ?? '',
+      name: query?.q?.name ?? '',
+      spdxIdentifier: query?.q?.spdx ?? '',
+
       page: query.page - 1,
       size: query.size,
     },
@@ -40,6 +47,60 @@ export const searchLicense = cachedFunction<OsoriListResponse<OsoriLicenseInfo> 
   createCacheOptions('licenses', (e) => {
     const count = (e.value as OsoriListResponse<OsoriLicenseInfo>)?.messageList?.count
 
+    return !(!e.value || count === undefined || count === 0)
+  }),
+)
+
+export const getLicenseDetail = cachedFunction<OsoriDetailResponse<OsoriLicenseDetailInfo> | OsoriErrorResponse>(
+  (query: LicenseDetailQuery): Promise<OsoriDetailResponse<OsoriLicenseDetailInfo>> => fetchLicense<OsoriDetailResponse<OsoriLicenseDetailInfo>>(`/id?searchWord=${query.id}`),
+  createCacheOptions('license-id', (e) => {
+    return !(!e.value || !e.value.success)
+  }),
+)
+
+export const searchLicenseWithDetails = cachedFunction<OsoriListResponse<OsoriLicenseInfo> | OsoriErrorResponse>(
+  async (query: SearchLicenseQuery): Promise<OsoriListResponse<OsoriLicenseInfo>> => {
+    const searchResult = await searchLicense(query)
+    
+    if (!searchResult.success) {
+      return searchResult
+    }
+
+    const detailedLicenses = await Promise.all(
+      searchResult.messageList.list.map(async (license) => {
+        const detailResult = await getLicenseDetail({ id: license.id.toString() })
+        
+        if (detailResult.success && detailResult.messageList.detailInfo[0]) {
+          const detail = detailResult.messageList.detailInfo[0]
+          return {
+            ...license,
+            spdx_identifier: detail.spdx_identifier,
+            license_text: detail.license_text,
+            webpage: detail.webpage,
+            created_date: detail.created_date,
+            modified_date: detail.modified_date,
+            nicknamelist: detail.nicknamelist,
+            webpagelist: detail.webpagelist,
+            restrictionlist: detail.restrictionlist,
+            description: detail.description,
+            description_ko: detail.description_ko
+          }
+        }
+        
+        return license
+      })
+    )
+
+    return {
+      ...searchResult,
+      messageList: {
+        ...searchResult.messageList,
+        list: detailedLicenses
+      }
+    }
+  },
+  createCacheOptions('licenses-with-details', (e) => {
+    const count = (e.value as OsoriListResponse<OsoriLicenseInfo>)?.messageList?.count
     return !(!e.value || count === undefined || count === 0)
   }),
 )
