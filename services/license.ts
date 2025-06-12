@@ -1,4 +1,3 @@
-import { version } from '../package.json'
 import { cachedFunction } from 'nitropack/runtime'
 import { createCacheOptions } from '~/utils/cache'
 import {
@@ -9,14 +8,14 @@ import {
   OsoriListResponse
 } from '~/schema/osori'
 import { LicenseDetailQuery, SearchLicenseQuery } from '~/schema/license'
-import { transformLicenseDetail, processBatch } from '~/utils/license-transform'
+import { processBatch, transformLicenseDetail } from '~/utils/license-transform'
 
 const fetchLicense = $fetch.create(
   {
     baseURL: 'https://www.olis.or.kr:15443/api/v2/user/licenses',
     method: 'GET',
     headers: {
-      'User-Agent': `rest-osori/${version}`,
+      'User-Agent': `rest-osori/1.0.0`,
     },
 
     retry: 3,
@@ -62,7 +61,7 @@ export const getLicenseDetail = cachedFunction<OsoriDetailResponse<OsoriLicenseD
 export const searchLicenseWithDetails = cachedFunction<OsoriListResponse<OsoriLicenseInfo> | OsoriErrorResponse>(
   async (query: SearchLicenseQuery): Promise<OsoriListResponse<OsoriLicenseInfo>> => {
     const searchResult = await searchLicense(query)
-    
+
     if (!searchResult.success) {
       return searchResult
     }
@@ -73,12 +72,12 @@ export const searchLicenseWithDetails = cachedFunction<OsoriListResponse<OsoriLi
       async (license) => {
         try {
           const detailResult = await getLicenseDetail({ id: license.id.toString() })
-          
+
           if (detailResult.success && detailResult.messageList.detailInfo[0]) {
             const detail = detailResult.messageList.detailInfo[0]
             // 업스트림 데이터 변환 적용 (nicknamelist 문자열 -> 배열)
             const transformedDetail = transformLicenseDetail(detail)
-            
+
             return {
               ...license,
               spdx_identifier: transformedDetail.spdx_identifier,
@@ -96,7 +95,7 @@ export const searchLicenseWithDetails = cachedFunction<OsoriListResponse<OsoriLi
         } catch (error) {
           console.warn(`Failed to fetch details for license ${license.id}:`, error)
         }
-        
+
         return license
       },
       10 // 동시에 최대 10개의 요청만 처리
