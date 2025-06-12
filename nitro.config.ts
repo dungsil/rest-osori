@@ -1,5 +1,3 @@
-import { version } from './package.json'
-
 export default defineNitroConfig({
   compatibilityDate: '2025-06-01',
 
@@ -29,7 +27,7 @@ export default defineNitroConfig({
     production: 'prerender',
     meta: {
       title: 'Rest OSORI API',
-      version,
+      version: '1.0.0',
       description: [
         '저작권위원회 오소리(OSORI) API 프록시',
         '오소리 API를 프록시하여 캐싱 및 응답 속도를 최적화하고 RESTful-Like 한 API를 제공해 DX를 향상시킵니다.',
