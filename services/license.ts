@@ -9,7 +9,7 @@ import {
   OsoriListResponse
 } from '~/schema/osori'
 import { LicenseDetailQuery, SearchLicenseQuery } from '~/schema/license'
-import { transformLicenseDetail } from '~/utils/license-transform'
+import { transformLicenseDetail, processBatch } from '~/utils/license-transform'
 
 const fetchLicense = $fetch.create(
   {
@@ -67,32 +67,39 @@ export const searchLicenseWithDetails = cachedFunction<OsoriListResponse<OsoriLi
       return searchResult
     }
 
-    const detailedLicenses = await Promise.all(
-      searchResult.messageList.list.map(async (license) => {
-        const detailResult = await getLicenseDetail({ id: license.id.toString() })
-        
-        if (detailResult.success && detailResult.messageList.detailInfo[0]) {
-          const detail = detailResult.messageList.detailInfo[0]
-          // 업스트림 데이터 변환 적용 (nicknamelist 문자열 -> 배열)
-          const transformedDetail = transformLicenseDetail(detail)
+    // 배치 처리로 동시 요청 수 제한 (기본값: 5개씩 처리)
+    const detailedLicenses = await processBatch(
+      searchResult.messageList.list,
+      async (license) => {
+        try {
+          const detailResult = await getLicenseDetail({ id: license.id.toString() })
           
-          return {
-            ...license,
-            spdx_identifier: transformedDetail.spdx_identifier,
-            license_text: transformedDetail.license_text,
-            webpage: transformedDetail.webpage,
-            created_date: transformedDetail.created_date,
-            modified_date: transformedDetail.modified_date,
-            nicknamelist: transformedDetail.nicknamelist,
-            webpagelist: transformedDetail.webpagelist,
-            restrictionlist: transformedDetail.restrictionlist,
-            description: transformedDetail.description,
-            description_ko: transformedDetail.description_ko
+          if (detailResult.success && detailResult.messageList.detailInfo[0]) {
+            const detail = detailResult.messageList.detailInfo[0]
+            // 업스트림 데이터 변환 적용 (nicknamelist 문자열 -> 배열)
+            const transformedDetail = transformLicenseDetail(detail)
+            
+            return {
+              ...license,
+              spdx_identifier: transformedDetail.spdx_identifier,
+              license_text: transformedDetail.license_text,
+              webpage: transformedDetail.webpage,
+              created_date: transformedDetail.created_date,
+              modified_date: transformedDetail.modified_date,
+              nicknamelist: transformedDetail.nicknamelist,
+              webpagelist: transformedDetail.webpagelist,
+              restrictionlist: transformedDetail.restrictionlist,
+              description: transformedDetail.description,
+              description_ko: transformedDetail.description_ko
+            }
           }
+        } catch (error) {
+          console.warn(`Failed to fetch details for license ${license.id}:`, error)
         }
         
         return license
-      })
+      },
+      10 // 동시에 최대 10개의 요청만 처리
     )
 
     return {

@@ -63,3 +63,42 @@ export function transformLicenseDetail(licenseDetail: any) {
     nicknamelist: parseNicknameList(licenseDetail.nicknamelist)
   }
 }
+
+/**
+ * 배열을 지정된 크기의 청크로 분할
+ * 
+ * @param array - 분할할 배열
+ * @param chunkSize - 청크 크기
+ * @returns 청크 배열
+ */
+export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+  const chunks: T[][] = []
+  for (let i = 0; i < array.length; i += chunkSize) {
+    chunks.push(array.slice(i, i + chunkSize))
+  }
+  return chunks
+}
+
+/**
+ * 병렬 처리를 위한 비동기 배치 처리
+ * 
+ * @param items - 처리할 아이템 배열
+ * @param processor - 각 아이템을 처리할 비동기 함수
+ * @param batchSize - 동시에 처리할 배치 크기 (기본값: 5)
+ * @returns 처리된 결과 배열
+ */
+export async function processBatch<T, R>(
+  items: T[],
+  processor: (item: T) => Promise<R>,
+  batchSize: number = 5
+): Promise<R[]> {
+  const chunks = chunkArray(items, batchSize)
+  const results: R[] = []
+  
+  for (const chunk of chunks) {
+    const chunkResults = await Promise.all(chunk.map(processor))
+    results.push(...chunkResults)
+  }
+  
+  return results
+}
