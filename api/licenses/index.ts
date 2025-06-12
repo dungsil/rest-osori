@@ -4,6 +4,7 @@ import { searchLicenseWithDetails } from '~/services/license'
 import { OsoriErrorResponse, OsoriLicenseInfo, OsoriListResponse } from '~/schema/osori'
 import { createErrorResponse } from '~/utils/error'
 import { Page } from '~/schema/pagination'
+import { transformObligations } from '~/utils/license-transform'
 
 export default defineCachedEventHandler(async (e) => {
   const query = await getSearchLicenseQuery(e)
@@ -22,9 +23,7 @@ export default defineCachedEventHandler(async (e) => {
         osi_approval: i.osi_approval,
         license_text: i.license_text || '',
         webpage: i.webpage || '',
-        obligation_disclosing_src: i.obligation_disclosing_src,
-        obligation_notification: i.obligation_notification ? 'Y' : 'N',
-        obligation_including_license: 'N/A',
+        obligations: transformObligations(i),
         nicknames: i.nicknamelist || []
       }))
     }

@@ -1,13 +1,32 @@
 import * as v from 'valibot'
 import { pageSpec } from './pagination'
 import { parseSearchQuery } from '~/utils/search'
-import { EventHandlerRequest, getValidatedQuery, getRouterParam, H3Event, createError } from 'h3'
+import { createError, EventHandlerRequest, getRouterParam, getValidatedQuery, H3Event } from 'h3'
 
 export interface LicenseQuery {
   id?: string
   spdx?: string
   name?: string
 }
+
+export type ObligationDisclosingSrc = 
+  | 'NONE'
+  | 'ORIGINAL'
+  | 'FILE'
+  | 'MODULE'
+  | 'LIBRARY'
+  | 'DERIVATIVE WORK'
+  | 'EXECUTABLE'
+  | 'DATA'
+  | 'SOFTWARE USING THIS'
+  | 'UNSPECIFIED'
+
+export type ObligationIncludingLicense = 
+  | 'REQUIRED'
+  | 'OPTIONAL'
+  | 'RECOMMENDED'
+  | 'NONE'
+  | 'UNSPECIFIED'
 
 export interface LicenseInfo {
   id: number,
@@ -16,12 +35,13 @@ export interface LicenseInfo {
   osi_approval: boolean,
   license_text: string,
   webpage: string,
-  obligation_disclosing_src: string,
-  obligation_notification: string,
-  obligation_including_license: string,
+  obligations: {
+    disclosing_src: ObligationDisclosingSrc,
+    notification: boolean,
+    including_license: ObligationIncludingLicense
+  },
   nicknames: string[]
 }
-
 
 export interface LicenseDetailQuery {
   id: string
@@ -66,13 +86,13 @@ export type LicenseDetailQuerySpec = v.InferOutput<typeof licenseDetailSpec>
 
 export async function getLicenseDetailQuery (e: H3Event<EventHandlerRequest>): Promise<LicenseDetailQuery> {
   const id = getRouterParam(e, 'id')
-  
+
   if (!id) {
     throw createError({
       statusCode: 400,
       statusMessage: 'License ID is required'
     })
   }
-  
+
   return { id }
 }

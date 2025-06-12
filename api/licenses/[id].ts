@@ -2,7 +2,7 @@ import { defineCachedEventHandler, defineRouteMeta } from 'nitropack/runtime'
 import { createError } from 'h3'
 import { getLicenseDetailQuery, LicenseInfo } from '~/schema/license'
 import { getLicenseDetail } from '~/services/license'
-import { OsoriErrorResponse, OsoriLicenseDetailInfo, OsoriDetailResponse } from '~/schema/osori'
+import { OsoriDetailResponse, OsoriErrorResponse, OsoriLicenseDetailInfo } from '~/schema/osori'
 import { createErrorResponse } from '~/utils/error'
 import { transformLicenseDetail } from '~/utils/license-transform'
 
@@ -32,9 +32,7 @@ export default defineCachedEventHandler(async (e) => {
       osi_approval: transformedLicense.osi_approval,
       license_text: transformedLicense.license_text,
       webpage: transformedLicense.webpage,
-      obligation_disclosing_src: transformedLicense.obligation_disclosing_src,
-      obligation_notification: transformedLicense.obligation_notification ? 'Y' : 'N',
-      obligation_including_license: transformedLicense.obligation_including_license || 'N/A',
+      obligations: transformedLicense.obligations,
       nicknames: transformedLicense.nicknamelist
     }
   }

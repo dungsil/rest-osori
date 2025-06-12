@@ -5,6 +5,8 @@
  * 업스트림에서 수정되면 해당 함수들을 제거할 수 있습니다.
  */
 
+import type { ObligationDisclosingSrc, ObligationIncludingLicense } from '~/schema/license'
+
 /**
  * 업스트림 API에서 nicknamelist가 문자열로 반환되는 것을 배열로 변환
  * 
@@ -49,6 +51,52 @@ export function parseNicknameList(nicknamelist: string | string[] | null | undef
 }
 
 /**
+ * obligation 필드들을 객체 형식으로 변환
+ * 
+ * @param licenseData - 업스트림에서 받은 라이선스 정보
+ * @returns 변환된 obligations 객체
+ */
+export function transformObligations(licenseData: any) {
+  const parseNotificationValue = (value: string | boolean | undefined | null): boolean => {
+    if (typeof value === 'boolean') return value
+    if (typeof value === 'string') {
+      const normalized = value.toLowerCase().trim()
+      return normalized === 'y' || normalized === 'yes' || normalized === 'true' || normalized === '1'
+    }
+    return false
+  }
+
+  const parseDisclosingSrcValue = (value: string | undefined | null): ObligationDisclosingSrc => {
+    if (!value) return 'UNSPECIFIED'
+    
+    const validValues: ObligationDisclosingSrc[] = [
+      'NONE', 'ORIGINAL', 'FILE', 'MODULE', 'LIBRARY', 
+      'DERIVATIVE WORK', 'EXECUTABLE', 'DATA', 'SOFTWARE USING THIS', 'UNSPECIFIED'
+    ]
+    
+    const upperValue = value.toUpperCase() as ObligationDisclosingSrc
+    return validValues.includes(upperValue) ? upperValue : 'UNSPECIFIED'
+  }
+
+  const parseIncludingLicenseValue = (value: string | undefined | null): ObligationIncludingLicense => {
+    if (!value) return 'UNSPECIFIED'
+    
+    const validValues: ObligationIncludingLicense[] = [
+      'REQUIRED', 'OPTIONAL', 'RECOMMENDED', 'NONE', 'UNSPECIFIED'
+    ]
+    
+    const upperValue = value.toUpperCase() as ObligationIncludingLicense
+    return validValues.includes(upperValue) ? upperValue : 'UNSPECIFIED'
+  }
+
+  return {
+    disclosing_src: parseDisclosingSrcValue(licenseData.obligation_disclosing_src),
+    notification: parseNotificationValue(licenseData.obligation_notification),  
+    including_license: parseIncludingLicenseValue(licenseData.obligation_including_license)
+  }
+}
+
+/**
  * 라이선스 상세 정보의 임시 변환을 수행
  * 
  * TODO: 업스트림 API가 수정되면 이 함수의 변환 로직을 단순화하거나 제거하세요.
@@ -60,7 +108,9 @@ export function transformLicenseDetail(licenseDetail: any) {
   return {
     ...licenseDetail,
     // nicknamelist 문자열을 배열로 변환
-    nicknamelist: parseNicknameList(licenseDetail.nicknamelist)
+    nicknamelist: parseNicknameList(licenseDetail.nicknamelist),
+    // obligations 객체로 변환
+    obligations: transformObligations(licenseDetail)
   }
 }
 
