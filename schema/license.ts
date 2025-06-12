@@ -17,11 +17,11 @@ export interface LicenseQuery {
 
 /**
  * 소스코드 공개 의무 타입
- * 
+ *
  * @description 라이선스에 따른 소스코드 공개 범위를 나타냅니다.
  */
-export type ObligationDisclosingSrc = 
-  /** 공개 의무 없음 */
+export type ObligationDisclosingSrc =
+/** 공개 의무 없음 */
   | 'NONE'
   /** 원본 소스코드 공개 */
   | 'ORIGINAL'
@@ -44,11 +44,11 @@ export type ObligationDisclosingSrc =
 
 /**
  * 라이선스 포함 의무 타입
- * 
+ *
  * @description 배포 시 라이선스 텍스트 포함 요구사항을 나타냅니다.
  */
-export type ObligationIncludingLicense = 
-  /** 라이선스 포함 필수 */
+export type ObligationIncludingLicense =
+/** 라이선스 포함 필수 */
   | 'REQUIRED'
   /** 라이선스 포함 선택사항 */
   | 'OPTIONAL'
@@ -61,7 +61,7 @@ export type ObligationIncludingLicense =
 
 /**
  * 라이선스 정보 인터페이스
- * 
+ *
  * @description API에서 반환되는 라이선스 정보의 구조를 정의합니다.
  */
 export interface LicenseInfo {
@@ -70,7 +70,7 @@ export interface LicenseInfo {
   /** 라이선스 이름 */
   name: string,
   /** SPDX 식별자 */
-  spdx_identifier: string,
+  spdx: string,
   /** OSI 승인 여부 */
   osi_approval: boolean,
   /** 라이선스 전문 */

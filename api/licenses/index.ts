@@ -19,7 +19,7 @@ export default defineCachedEventHandler(async (e) => {
       items: list.messageList.list.map((i) => ({
         id: i.id,
         name: i.name,
-        spdx_identifier: i.spdx_identifier || '',
+        spdx: i.spdx_identifier || '',
         osi_approval: i.osi_approval,
         license_text: i.license_text || '',
         webpage: i.webpage || '',

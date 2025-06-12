@@ -33,14 +33,17 @@ curl "/api/licenses?q=name:MIT&page=1&size=10"
     {
       "id": 1,
       "name": "MIT License",
-      "spdx_identifier": "MIT",
+      "spdx": "MIT",
       "osi_approval": true,
       "obligations": {
         "disclosing_src": "NONE",
         "notification": true,
         "including_license": "REQUIRED"
       },
-      "nicknames": ["MIT", "Expat License"]
+      "nicknames": [
+        "MIT",
+        "Expat License"
+      ]
     }
   ]
 }
@@ -63,7 +66,7 @@ curl "/api/licenses/1"
 {
   "id": 1,
   "name": "MIT License",
-  "spdx_identifier": "MIT",
+  "spdx": "MIT",
   "osi_approval": true,
   "license_text": "MIT License\n\nCopyright (c) [year] [fullname]\n\nPermission is hereby granted...",
   "obligations": {
@@ -71,7 +74,10 @@ curl "/api/licenses/1"
     "notification": true,
     "including_license": "REQUIRED"
   },
-  "nicknames": ["MIT", "Expat License"]
+  "nicknames": [
+    "MIT",
+    "Expat License"
+  ]
 }
 ```
 
