@@ -1,33 +1,67 @@
+/**
+ * OSORI API 기본 응답 인터페이스
+ * 
+ * @template T - 응답 데이터 타입
+ */
 export interface OsoriResponse<T = unknown> {
+  /** 응답 코드 */
   code: '200' | '400' | '429'
+  /** 성공 여부 */
   success: boolean
+  /** 응답 메시지 데이터 */
   messageList: T
 }
 
+/**
+ * OSORI API 목록 응답 인터페이스
+ * 
+ * @template T - 목록 아이템 타입
+ */
 export interface OsoriListResponse<T = unknown> extends OsoriResponse<{
+  /** 현재 페이지 번호 */
   page: number,
+  /** 페이지 크기 */
   size: number,
+  /** 전체 아이템 수 */
   count: number,
+  /** 아이템 목록 */
   list: T[]
 }> {
   success: true
 }
 
+/**
+ * OSORI API 상세 응답 인터페이스
+ * 
+ * @template T - 상세 정보 타입
+ */
 export interface OsoriDetailResponse<T = unknown> extends OsoriResponse<{
+  /** 상세 정보 배열 */
   detailInfo: T[]
 }> {
   success: true
 }
 
+/**
+ * OSORI API 오류 응답 인터페이스
+ */
 export interface OsoriErrorResponse extends OsoriResponse<{
+  /** 오류 목록 */
   errors: {
+    /** 오류 메시지 */
     message: string
+    /** 상세 오류 정보 */
     detailInfo?: object
   }[]
 }> {
   success: false
 }
 
+/**
+ * OSORI API 라이선스 정보 인터페이스 (목록 조회용)
+ * 
+ * @description 업스트림 OSORI API에서 반환되는 라이선스 목록 아이템 구조
+ */
 export interface OsoriLicenseInfo {
   /** 라이선스 ID */
   id: number,
@@ -75,6 +109,11 @@ export interface OsoriLicenseInfo {
   description_ko?: string | null
 }
 
+/**
+ * OSORI API 라이선스 상세 정보 인터페이스
+ * 
+ * @description 업스트림 OSORI API에서 반환되는 라이선스 상세 정보 구조
+ */
 export interface OsoriLicenseDetailInfo {
   /** 라이선스 ID */
   id: number,
