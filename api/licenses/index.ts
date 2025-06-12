@@ -25,8 +25,6 @@ export default defineCachedEventHandler(async (e) => {
         obligation_disclosing_src: i.obligation_disclosing_src,
         obligation_notification: i.obligation_notification ? 'Y' : 'N',
         obligation_including_license: 'N/A',
-        created_at: i.created_date || '',
-        modified_at: i.modified_date || '',
         nicknames: i.nicknamelist || []
       }))
     }

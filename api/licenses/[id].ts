@@ -35,8 +35,6 @@ export default defineCachedEventHandler(async (e) => {
       obligation_disclosing_src: transformedLicense.obligation_disclosing_src,
       obligation_notification: transformedLicense.obligation_notification ? 'Y' : 'N',
       obligation_including_license: transformedLicense.obligation_including_license || 'N/A',
-      created_at: transformedLicense.created_date,
-      modified_at: transformedLicense.modified_date,
       nicknames: transformedLicense.nicknamelist
     }
   }

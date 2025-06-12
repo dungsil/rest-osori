@@ -19,8 +19,6 @@ export interface LicenseInfo {
   obligation_disclosing_src: string,
   obligation_notification: string,
   obligation_including_license: string,
-  created_at: string,
-  modified_at: string,
   nicknames: string[]
 }
 
