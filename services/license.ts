@@ -9,6 +9,7 @@ import {
   OsoriListResponse
 } from '~/schema/osori'
 import { LicenseDetailQuery, SearchLicenseQuery } from '~/schema/license'
+import { transformLicenseDetail } from '~/utils/license-transform'
 
 const fetchLicense = $fetch.create(
   {
@@ -72,18 +73,21 @@ export const searchLicenseWithDetails = cachedFunction<OsoriListResponse<OsoriLi
         
         if (detailResult.success && detailResult.messageList.detailInfo[0]) {
           const detail = detailResult.messageList.detailInfo[0]
+          // 업스트림 데이터 변환 적용 (nicknamelist 문자열 -> 배열)
+          const transformedDetail = transformLicenseDetail(detail)
+          
           return {
             ...license,
-            spdx_identifier: detail.spdx_identifier,
-            license_text: detail.license_text,
-            webpage: detail.webpage,
-            created_date: detail.created_date,
-            modified_date: detail.modified_date,
-            nicknamelist: detail.nicknamelist,
-            webpagelist: detail.webpagelist,
-            restrictionlist: detail.restrictionlist,
-            description: detail.description,
-            description_ko: detail.description_ko
+            spdx_identifier: transformedDetail.spdx_identifier,
+            license_text: transformedDetail.license_text,
+            webpage: transformedDetail.webpage,
+            created_date: transformedDetail.created_date,
+            modified_date: transformedDetail.modified_date,
+            nicknamelist: transformedDetail.nicknamelist,
+            webpagelist: transformedDetail.webpagelist,
+            restrictionlist: transformedDetail.restrictionlist,
+            description: transformedDetail.description,
+            description_ko: transformedDetail.description_ko
           }
         }
         

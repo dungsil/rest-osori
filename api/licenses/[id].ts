@@ -4,6 +4,7 @@ import { getLicenseDetailQuery, LicenseInfo } from '~/schema/license'
 import { getLicenseDetail } from '~/services/license'
 import { OsoriErrorResponse, OsoriLicenseDetailInfo, OsoriDetailResponse } from '~/schema/osori'
 import { createErrorResponse } from '~/utils/error'
+import { transformLicenseDetail } from '~/utils/license-transform'
 
 export default defineCachedEventHandler(async (e) => {
   const query = await getLicenseDetailQuery(e)
@@ -21,19 +22,22 @@ export default defineCachedEventHandler(async (e) => {
       })
     }
 
+    // 업스트림 데이터 변환 적용 (nicknamelist 문자열 -> 배열)
+    const transformedLicense = transformLicenseDetail(licenseInfo)
+
     return <LicenseInfo>{
-      id: licenseInfo.id,
-      name: licenseInfo.name,
-      spdx_identifier: licenseInfo.spdx_identifier,
-      osi_approval: licenseInfo.osi_approval,
-      license_text: licenseInfo.license_text,
-      webpage: licenseInfo.webpage,
-      obligation_disclosing_src: licenseInfo.obligation_disclosing_src,
-      obligation_notification: licenseInfo.obligation_notification ? 'Y' : 'N',
-      obligation_including_license: licenseInfo.obligation_including_license || 'N/A',
-      created_at: licenseInfo.created_date,
-      modified_at: licenseInfo.modified_date,
-      nicknames: licenseInfo.nicknamelist || []
+      id: transformedLicense.id,
+      name: transformedLicense.name,
+      spdx_identifier: transformedLicense.spdx_identifier,
+      osi_approval: transformedLicense.osi_approval,
+      license_text: transformedLicense.license_text,
+      webpage: transformedLicense.webpage,
+      obligation_disclosing_src: transformedLicense.obligation_disclosing_src,
+      obligation_notification: transformedLicense.obligation_notification ? 'Y' : 'N',
+      obligation_including_license: transformedLicense.obligation_including_license || 'N/A',
+      created_at: transformedLicense.created_date,
+      modified_at: transformedLicense.modified_date,
+      nicknames: transformedLicense.nicknamelist
     }
   }
 

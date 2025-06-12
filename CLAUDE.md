@@ -27,6 +27,7 @@ This is a Nitro-based REST API proxy for the Korean OSORI (Open Source License I
 - **Search**: Lucene-kit based query parsing for flexible search syntax
 - **Error handling**: Centralized error response creation
 - **OpenAPI**: Auto-generated documentation at root path using Scalar UI
+- **Data transformation**: Utilities in `utils/license-transform.ts` for upstream API inconsistencies
 
 ### Data Flow
 1. API routes receive requests and validate using schema functions
@@ -38,3 +39,17 @@ This is a Nitro-based REST API proxy for the Korean OSORI (Open Source License I
 - **Upstream API**: https://www.olis.or.kr:15443/api/v2/
 - **Package manager**: pnpm (specified in packageManager field)
 - **Runtime**: Node.js with Nitro framework
+
+## Important Notes
+
+### Temporary Data Transformations
+The `utils/license-transform.ts` file contains transformation logic for upstream API inconsistencies:
+
+- **nicknamelist conversion**: Currently converts string-formatted nicknamelist to proper arrays
+- **Removal instructions**: When upstream API is fixed, these transformations can be safely removed
+
+Example usage:
+```typescript
+import { transformLicenseDetail } from '~/utils/license-transform'
+const transformedData = transformLicenseDetail(upstreamData)
+```
