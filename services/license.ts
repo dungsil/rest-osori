@@ -29,8 +29,8 @@ const fetchLicense = $fetch.create(
   }
 )
 
-export const searchLicense = cachedFunction<OsoriListResponse<OsoriLicenseInfo> | OsoriErrorResponse>(
-  (query: SearchLicenseQuery): Promise<OsoriListResponse<OsoriLicenseInfo>> => fetchLicense<OsoriListResponse<OsoriLicenseInfo>>('', {
+export const searchLicense = cachedFunction(
+  (query: SearchLicenseQuery): Promise<OsoriListResponse<OsoriLicenseInfo> | OsoriErrorResponse> => fetchLicense<OsoriListResponse<OsoriLicenseInfo> | OsoriErrorResponse>('', {
     query: {
       equalFlag: 'N',
       sort: 'id',
@@ -51,15 +51,15 @@ export const searchLicense = cachedFunction<OsoriListResponse<OsoriLicenseInfo> 
   }),
 )
 
-export const getLicenseDetail = cachedFunction<OsoriDetailResponse<OsoriLicenseDetailInfo> | OsoriErrorResponse>(
-  (query: LicenseDetailQuery): Promise<OsoriDetailResponse<OsoriLicenseDetailInfo>> => fetchLicense<OsoriDetailResponse<OsoriLicenseDetailInfo>>(`/id?searchWord=${query.id}`),
+export const getLicenseDetail = cachedFunction(
+  (query: LicenseDetailQuery): Promise<OsoriDetailResponse<OsoriLicenseDetailInfo> | OsoriErrorResponse> => fetchLicense<OsoriDetailResponse<OsoriLicenseDetailInfo> | OsoriErrorResponse>(`/id?searchWord=${query.id}`),
   createCacheOptions('license-id', (e) => {
     return !(!e.value || !e.value.success)
   }),
 )
 
-export const searchLicenseWithDetails = cachedFunction<OsoriListResponse<OsoriLicenseInfo> | OsoriErrorResponse>(
-  async (query: SearchLicenseQuery): Promise<OsoriListResponse<OsoriLicenseInfo>> => {
+export const searchLicenseWithDetails = cachedFunction(
+  async (query: SearchLicenseQuery): Promise<OsoriListResponse<OsoriLicenseInfo> | OsoriErrorResponse> => {
     const searchResult = await searchLicense(query)
 
     if (!searchResult.success) {
@@ -69,7 +69,7 @@ export const searchLicenseWithDetails = cachedFunction<OsoriListResponse<OsoriLi
     // 배치 처리로 동시 요청 수 제한 (기본값: 5개씩 처리)
     const detailedLicenses = await processBatch(
       searchResult.messageList.list,
-      async (license) => {
+      async (license: OsoriLicenseInfo) => {
         try {
           const detailResult = await getLicenseDetail({ id: license.id.toString() })
 
