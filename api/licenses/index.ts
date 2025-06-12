@@ -22,7 +22,7 @@ export default defineCachedEventHandler(async (e) => {
         spdx: i.spdx_identifier || '',
         osi_approval: i.osi_approval,
         license_text: i.license_text || '',
-        webpage: i.webpage || '',
+        url: i.webpage || '',
         obligations: transformObligations(i),
         nicknames: i.nicknamelist || []
       }))

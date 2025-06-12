@@ -76,7 +76,7 @@ export interface LicenseInfo {
   /** 라이선스 전문 */
   license_text: string,
   /** 라이선스 웹페이지 URL */
-  webpage: string,
+  url: string,
   /** 라이선스 의무사항 */
   obligations: {
     /** 소스코드 공개 의무 */

@@ -31,7 +31,7 @@ export default defineCachedEventHandler(async (e) => {
       spdx: transformedLicense.spdx_identifier,
       osi_approval: transformedLicense.osi_approval,
       license_text: transformedLicense.license_text,
-      webpage: transformedLicense.webpage,
+      url: transformedLicense.webpage,
       obligations: transformedLicense.obligations,
       nicknames: transformedLicense.nicknamelist
     }
