@@ -1,7 +1,7 @@
 import { defineCachedEventHandler, defineRouteMeta } from 'nitropack/runtime'
 import { createError } from 'h3'
 import { getLicenseDetailQuery, LicenseInfo } from '~/schema/license'
-import { getLicenseDetail } from '~/services/license'
+import { fetchLicenseByIdOrSpdxId } from '~/services/license'
 import { OsoriDetailResponse, OsoriErrorResponse, OsoriLicenseDetailInfo } from '~/schema/osori'
 import { createErrorResponse } from '~/utils/error'
 import { transformLicenseDetail } from '~/utils/license-transform'
@@ -9,7 +9,7 @@ import { transformLicenseDetail } from '~/utils/license-transform'
 export default defineCachedEventHandler(async (e) => {
   const query = await getLicenseDetailQuery(e)
 
-  const response = await getLicenseDetail(query)
+  const response = await fetchLicenseByIdOrSpdxId(query)
 
   if (response.success) {
     const detail = response as OsoriDetailResponse<OsoriLicenseDetailInfo>
@@ -50,7 +50,7 @@ defineRouteMeta({
         in: 'path',
         required: true,
         schema: { type: 'string' },
-        description: '라이선스 ID'
+        description: '라이선스 ID 또는 SPDX ID (예: 1 또는 MIT)'
       }
     ]
   }

@@ -98,7 +98,7 @@ export interface LicenseInfo {
  * 라이선스 상세 조회 쿼리 인터페이스
  */
 export interface LicenseDetailQuery {
-  /** 라이선스 ID */
+  /** 라이선스 ID 또는 SPDX ID */
   id: string
 }
 

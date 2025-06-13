@@ -51,8 +51,16 @@ export const searchLicense = cachedFunction(
   }),
 )
 
-export const getLicenseDetail = cachedFunction(
-  (query: LicenseDetailQuery): Promise<OsoriDetailResponse<OsoriLicenseDetailInfo> | OsoriErrorResponse> => fetchLicense<OsoriDetailResponse<OsoriLicenseDetailInfo> | OsoriErrorResponse>(`/id?searchWord=${query.id}`),
+export const fetchLicenseByIdOrSpdxId = cachedFunction(
+  async (query: LicenseDetailQuery): Promise<OsoriDetailResponse<OsoriLicenseDetailInfo> | OsoriErrorResponse> => {
+    // 숫자인지 확인하여 ID 직접 조회 또는 SPDX 검색 결정
+    if (!isNaN(Number(query.id))) {
+      // 숫자면 ID로 직접 조회
+      return await fetchLicense<OsoriDetailResponse<OsoriLicenseDetailInfo> | OsoriErrorResponse>(`/id?searchWord=${query.id}`)
+    } else {
+      return await fetchLicense<OsoriDetailResponse<OsoriLicenseDetailInfo> | OsoriErrorResponse>(`/spdx_identifier?searchWord=${query.id}`)
+    }
+  },
   createCacheOptions('license-id', (e) => {
     return !(!e.value || !e.value.success)
   }),
@@ -71,7 +79,7 @@ export const searchLicenseWithDetails = cachedFunction(
       searchResult.messageList.list,
       async (license: OsoriLicenseInfo) => {
         try {
-          const detailResult = await getLicenseDetail({ id: license.id.toString() })
+          const detailResult = await fetchLicenseByIdOrSpdxId({ id: license.id.toString() })
 
           if (detailResult.success && detailResult.messageList.detailInfo[0]) {
             const detail = detailResult.messageList.detailInfo[0]
