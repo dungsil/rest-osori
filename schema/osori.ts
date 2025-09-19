@@ -163,3 +163,100 @@ export interface OsoriLicenseDetailInfo {
   /** 한국어 설명 */
   description_ko: string | null
 }
+
+/**
+ * OSORI API OSS 버전 정보 인터페이스
+ * 
+ * @description 업스트림 OSORI API에서 반환되는 OSS 버전 정보 구조
+ */
+export interface OsoriOssVersion {
+  /** OSS 버전 ID */
+  oss_version_id: number,
+  /** 버전 */
+  version: string | null,
+  /** 선언된 라이선스 목록 */
+  declaredLicenseList: string | null,
+  /** 탐지된 라이선스 목록 */
+  detectedLicenseList: string | null,
+  /** 제한사항 목록 */
+  restrictionList: string | null
+}
+
+/**
+ * OSORI API OSS 마스터 정보 인터페이스 (목록 조회용)
+ * 
+ * @description 업스트림 OSORI API에서 반환되는 OSS 마스터 정보 구조
+ */
+export interface OsoriOssMaster {
+  /** OSS 이름 */
+  name: string,
+  /** OSS 마스터 ID */
+  oss_master_id: number,
+  /** 버전 라이선스 차이 여부 */
+  version_license_diff: boolean,
+  /** Package URL */
+  purl: string,
+  /** 버전 목록 */
+  version: OsoriOssVersion[]
+}
+
+/**
+ * OSORI API OSS 목록 응답 인터페이스
+ * 
+ * @description 업스트림 OSORI API에서 반환되는 OSS 목록 응답 구조
+ */
+export interface OsoriOssListResponse extends OsoriResponse<{
+  /** OSS 마스터 목록 */
+  oss_master: OsoriOssMaster[]
+}> {
+  success?: boolean
+}
+
+/**
+ * OSORI API OSS 버전 상세 정보 인터페이스
+ * 
+ * @description 업스트림 OSORI API에서 반환되는 OSS 버전 상세 정보 구조
+ */
+export interface OsoriOssVersionDetail {
+  /** OSS 버전 ID */
+  oss_version_id: number,
+  /** 버전 */
+  version: string | null,
+  /** 설명 */
+  description: string | null,
+  /** 한국어 설명 */
+  description_ko: string | null,
+  /** 저작권 표시 */
+  attribution: string | null,
+  /** 라이선스 조합 */
+  license_combination: string,
+  /** 릴리스 날짜 */
+  release_date: string | null,
+  /** 생성일 */
+  created_date: string,
+  /** 수정일 */
+  modified_date: string,
+  /** 저작권 */
+  copyright: string | null,
+  /** 선언된 라이선스 목록 */
+  declaredLicenseList: string[] | null,
+  /** 탐지된 라이선스 목록 */
+  detectedLicenseList: string[] | null,
+  /** 제한사항 목록 */
+  restrictionList: string[] | null
+}
+
+/**
+ * OSORI API OSS 버전 상세 응답 인터페이스
+ * 
+ * @description 업스트림 OSORI API에서 반환되는 OSS 버전 상세 응답 구조
+ */
+export interface OsoriOssVersionResponse extends OsoriResponse<{
+  /** 상세 정보 */
+  detailInfo: {
+    /** OSS 버전 목록 */
+    oss_version: OsoriOssVersionDetail[]
+  }[]
+}> {
+  success?: boolean
+}
