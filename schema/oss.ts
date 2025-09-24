@@ -16,6 +16,76 @@ export interface OssQuery {
 }
 
 /**
+ * OSS 정보 인터페이스
+ *
+ * @description API에서 반환되는 OSS 정보의 구조를 정의합니다.
+ */
+export interface OssInfo {
+  /** OSS 고유 ID */
+  id: number,
+  /** OSS 이름 */
+  name: string,
+  /** 버전 라이선스 차이 여부 */
+  version_license_diff: boolean,
+  /** Package URL */
+  purl: string,
+  /** 버전 목록 */
+  versions: OssVersionInfo[]
+}
+
+/**
+ * OSS 버전 정보 인터페이스
+ *
+ * @description API에서 반환되는 OSS 버전 정보의 구조를 정의합니다.
+ */
+export interface OssVersionInfo {
+  /** OSS 버전 ID */
+  id: number,
+  /** 버전 */
+  version: string | null,
+  /** 선언된 라이선스 목록 */
+  declared_licenses: string | null,
+  /** 탐지된 라이선스 목록 */
+  detected_licenses: string | null,
+  /** 제한사항 목록 */
+  restrictions: string | null
+}
+
+/**
+ * OSS 버전 상세 정보 인터페이스
+ *
+ * @description API에서 반환되는 OSS 버전 상세 정보의 구조를 정의합니다.
+ */
+export interface OssVersionDetail {
+  /** OSS 버전 ID */
+  id: number,
+  /** 버전 */
+  version: string | null,
+  /** 설명 */
+  description: string | null,
+  /** 한국어 설명 */
+  description_ko: string | null,
+  /** 저작권 표시 */
+  attribution: string | null,
+  /** 라이선스 조합 */
+  license_combination: string,
+  /** 릴리스 날짜 */
+  release_date: string | null,
+  /** 생성일 */
+  created_at: string,
+  /** 수정일 */
+  modified_at: string,
+  /** 저작권 */
+  copyright: string | null,
+  /** 선언된 라이선스 목록 */
+  declared_licenses: string[] | null,
+  /** 탐지된 라이선스 목록 */
+  detected_licenses: string[] | null,
+  /** 제한사항 목록 */
+  restrictions: string[] | null
+}
+
+/**
  * OSS 상세 조회 쿼리 인터페이스
  */
 export interface OssDetailQuery {
