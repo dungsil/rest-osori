@@ -1,8 +1,10 @@
 import { defineCachedEventHandler, defineRouteMeta } from 'nitropack/runtime'
-import { getSearchOssQuery } from '~/schema/oss'
+import { getSearchOssQuery, OssInfo } from '~/schema/oss'
 import { searchOss } from '~/services/oss'
-import { OsoriErrorResponse } from '~/schema/osori'
+import { OsoriErrorResponse, OsoriOssListResponse } from '~/schema/osori'
 import { createErrorResponse } from '~/utils/error'
+import { Page } from '~/schema/pagination'
+import { transformOssMaster } from '~/utils/oss-transform'
 
 export default defineCachedEventHandler(async (e) => {
   const query = await getSearchOssQuery(e)
@@ -10,8 +12,12 @@ export default defineCachedEventHandler(async (e) => {
   const response = await searchOss(query)
 
   if (response.code === '200') {
-    // 원본 API와 동일하게 출력 (프록시 및 캐싱기능만 적용)
-    return response
+    const list = response as OsoriOssListResponse
+
+    return <Page<OssInfo>>{
+      total_count: list.messageList.oss_master?.length || 0,
+      items: list.messageList.oss_master?.map(transformOssMaster) || []
+    }
   }
 
   return createErrorResponse(e, response as OsoriErrorResponse)
@@ -20,8 +26,8 @@ export default defineCachedEventHandler(async (e) => {
 defineRouteMeta({
   openAPI: {
     tags: ['oss'],
-    summary: 'OSS 조회(사용자)',
-    description: 'OSS 목록(사용자) 조회',
+    summary: 'OSS 조회',
+    description: 'OSS 목록 조회',
     parameters: [
       {
         name: 'ossName',
@@ -78,6 +84,13 @@ defineRouteMeta({
         required: false,
         schema: { type: 'string', enum: ['ASC', 'DESC'], default: 'ASC' },
         description: '정렬 방향'
+      },
+      {
+        name: 'q',
+        in: 'query',
+        required: false,
+        schema: { type: 'string' },
+        description: 'Lucene 스타일 검색 쿼리 (예: name:spring, download:github.com)'
       }
     ]
   }
