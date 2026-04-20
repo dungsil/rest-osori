@@ -83,6 +83,77 @@ curl "/api/licenses/1"
 
 </details>
 
+### OSS 목록
+
+**GET** `/api/oss`
+
+```bash
+curl "/api/oss?q=name:spring-boot&page=1&size=10"
+```
+
+<details>
+<summary>응답 예시</summary>
+
+```json
+{
+  "total_count": 2,
+  "items": [
+    {
+      "id": 123,
+      "name": "spring-boot",
+      "version_license_diff": false,
+      "purl": "pkg:maven/org.springframework.boot/spring-boot",
+      "versions": [
+        {
+          "id": 456,
+          "version": "3.2.0",
+          "declared_licenses": "Apache-2.0",
+          "detected_licenses": null,
+          "restrictions": null
+        }
+      ]
+    }
+  ]
+}
+```
+
+</details>
+
+### OSS 상세
+
+**GET** `/api/oss/{id}`
+
+```bash
+# OSS ID, 이름, 또는 다운로드 위치로 조회 가능
+curl "/api/oss/spring-boot"
+curl "/api/oss/123"
+```
+
+<details>
+<summary>응답 예시</summary>
+
+```json
+{
+  "id": 456,
+  "version": "3.2.0",
+  "description": "Spring Boot helps you to create Spring-powered, production-grade applications...",
+  "description_ko": null,
+  "attribution": null,
+  "license_combination": "AND",
+  "release_date": "2023-11-23",
+  "created_at": "2023-10-01 09:00:00",
+  "modified_at": "2023-11-23 12:00:00",
+  "copyright": "Copyright 2012-2023 the original author or authors.",
+  "declared_licenses": [
+    "Apache-2.0"
+  ],
+  "detected_licenses": null,
+  "restrictions": null
+}
+```
+
+</details>
+
 ## 라이선스
 
 이 프로젝트는 [MIT 라이선스](./LICENSE) 하에 배포됩니다.
