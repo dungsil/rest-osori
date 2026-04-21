@@ -1,13 +1,11 @@
 import { defineCachedEventHandler, defineRouteMeta } from 'nitropack/runtime'
-import { createError } from 'h3'
-import { OssVersionDetail } from '~/schema/oss'
+import { createError, getRouterParam } from 'h3'
 import { fetchOssVersions } from '~/services/oss'
 import { OsoriOssVersionResponse, OsoriErrorResponse } from '~/schema/osori'
 import { createErrorResponse } from '~/utils/error'
 import { transformOssVersionDetail } from '~/utils/oss-transform'
-import { EventHandlerRequest, getRouterParam, H3Event } from 'h3'
 
-export default defineCachedEventHandler(async (e: H3Event<EventHandlerRequest>) => {
+export default defineCachedEventHandler(async (e) => {
   const id = getRouterParam(e, 'id')
 
   if (!id) {
@@ -34,6 +32,9 @@ export default defineCachedEventHandler(async (e: H3Event<EventHandlerRequest>) 
       if (versionInfo) {
         return transformOssVersionDetail(versionInfo)
       }
+    } else if (response.code === '429') {
+      // Rate limit - propagate immediately instead of trying next strategy
+      return createErrorResponse(e, response as OsoriErrorResponse)
     }
   }
 
@@ -54,7 +55,7 @@ defineRouteMeta({
         in: 'path',
         required: true,
         schema: { type: 'string' },
-        description: 'OSS ID, 이름 또는 다운로드 위치 (예: 1, spring-boot, github.com/spring-projects/spring-boot)'
+        description: 'OSS ID, 이름 또는 다운로드 위치. 다운로드 위치에 슬래시(/)가 포함되면 반드시 URL 인코딩된 값을 사용해야 합니다 (예: 1, spring-boot, github.com%2Fspring-projects%2Fspring-boot)'
       }
     ]
   }
