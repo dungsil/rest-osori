@@ -1,7 +1,7 @@
 import * as v from 'valibot'
 import { pageSpec } from './pagination'
 import { parseSearchQuery } from '~/utils/search'
-import { createError, EventHandlerRequest, getRouterParam, getValidatedQuery, H3Event } from 'h3'
+import { EventHandlerRequest, getValidatedQuery, H3Event } from 'h3'
 
 /**
  * OSS 검색 쿼리 인터페이스 (OpenAPI 스펙 기반)
@@ -133,32 +133,4 @@ export type SearchOssQuery = v.InferOutput<typeof searchOssSpec>
 
 export async function getSearchOssQuery (e: H3Event<EventHandlerRequest>): Promise<SearchOssQuery> {
   return getValidatedQuery<SearchOssQuery>(e, (value) => v.parse(searchOssSpec, value))
-}
-
-const ossDetailSpec = v.object({
-  category: v.string(),
-  searchWord: v.string()
-})
-
-export type OssDetailQuerySpec = v.InferOutput<typeof ossDetailSpec>
-
-export async function getOssDetailQuery (e: H3Event<EventHandlerRequest>): Promise<OssDetailQuery> {
-  const category = getRouterParam(e, 'category')
-  const query = await getValidatedQuery(e, (value) => ({ searchWord: value.searchWord }))
-
-  if (!category) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'OSS category is required'
-    })
-  }
-
-  if (!query.searchWord) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'searchWord parameter is required'
-    })
-  }
-
-  return { category, searchWord: query.searchWord }
 }

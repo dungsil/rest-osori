@@ -34,18 +34,18 @@ export const searchOss = cachedFunction(
       direction: query.direction || 'ASC',
       page: query.page - 1,
       size: query.size,
-      ...(query.ossName && { ossName: query.ossName }),
-      ...(query.downloadLocation && { downloadLocation: query.downloadLocation }),
-      ...(query.version && { version: query.version }),
-      // Support query parsing from 'q' parameter
+      // 'q' params applied first; explicit params override on conflict
       ...(query?.q?.ossName && { ossName: query.q.ossName }),
       ...(query?.q?.downloadLocation && { downloadLocation: query.q.downloadLocation }),
       ...(query?.q?.version && { version: query.q.version }),
+      ...(query.ossName && { ossName: query.ossName }),
+      ...(query.downloadLocation && { downloadLocation: query.downloadLocation }),
+      ...(query.version && { version: query.version }),
     },
   }),
   createCacheOptions('oss', (e) => {
     const ossMasters = (e.value as OsoriOssListResponse)?.messageList?.oss_master
-    return !(!e.value || e.value.code !== '200' || !ossMasters)
+    return !(!e.value || e.value.code !== '200' || !Array.isArray(ossMasters) || ossMasters.length === 0)
   }),
 )
 

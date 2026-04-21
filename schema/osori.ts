@@ -208,9 +208,7 @@ export interface OsoriOssMaster {
 export interface OsoriOssListResponse extends OsoriResponse<{
   /** OSS 마스터 목록 */
   oss_master: OsoriOssMaster[]
-}> {
-  success?: boolean
-}
+}> {}
 
 /**
  * OSORI API OSS 버전 상세 정보 인터페이스
@@ -257,6 +255,4 @@ export interface OsoriOssVersionResponse extends OsoriResponse<{
     /** OSS 버전 목록 */
     oss_version: OsoriOssVersionDetail[]
   }[]
-}> {
-  success?: boolean
-}
+}> {}
